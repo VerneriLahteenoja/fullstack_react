@@ -29,7 +29,6 @@ const Content = (props) => {
 
 const Total = (props) => {
   const sum = props.nums.reduce(function (add, total) {return add+total}, 0)
-  console.log(sum)
   return (
     <>
       <p>
