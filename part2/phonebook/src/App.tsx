@@ -8,14 +8,22 @@ const App = () => {
 
   const addPerson = (event: any) => {
     event.preventDefault()
-    setPersons(persons.concat([{name: newName}]))
-    setNewName('')
+
+    if (!alreadyExists()) {
+      setPersons(persons.concat([{name: newName}]))
+    } else {
+      alert(`${newName} is already added to phonebook`)
+    }
+
   }
 
   const handleInputChange = (event: any) => {
     setNewName(event.target.value)
   }
 
+  const alreadyExists = () => {
+    return (persons.map(person => person.name)).includes(newName)
+  }
 
   return (
     <div>
