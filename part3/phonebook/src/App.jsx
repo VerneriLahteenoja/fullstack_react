@@ -55,6 +55,18 @@ const PersonForm = (props) => {
 }
 
 const RenderPersons = (props) => {
+  
+  const handleDeleteButton = (id) => {
+    if (window.confirm(`Delete ${props.persons.find(p => p.id === id).name}?`)) {
+      personsService
+        .deletePerson(id)
+        .then(() => {
+          props.setPersons(props.persons.filter(person => person.id !== id))
+        })
+        .catch(error => console.log(`Error: ${error}`))
+    }
+  }
+  
   const filterPersons = () => {
     if (props.filterField.trim() === '') {
       return props.persons
@@ -65,8 +77,8 @@ const RenderPersons = (props) => {
   }
   return (
     filterPersons().map((person) => (
-      <div key={person.name}>
-        {person.name} {person.number}
+      <div key={person.id}>
+        {person.name} {person.number} <button onClick={() => handleDeleteButton(person.id)} type="button">delete</button>
       </div>))
   )
 }
@@ -85,7 +97,6 @@ const App = () => {
     })
   }, [])
   
-
   const handleFilterInput = (event) => {
     setFilter(event.target.value)
   }
@@ -122,6 +133,7 @@ const App = () => {
           <RenderPersons 
             filterField={filterField} 
             persons={persons}
+            setPersons={setPersons}
           />
         </div>
     </div>
