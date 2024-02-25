@@ -17,7 +17,6 @@ const PersonForm = (props) => {
     event.preventDefault()
 
     if (!alreadyExists()) {
-      //props.setPersons(props.persons.concat([{name: props.newPerson, number: props.newNumber}]))
       personsService
         .create({name: props.newPerson, number: props.newNumber})
         .then(response => {
