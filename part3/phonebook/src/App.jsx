@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personsService from './services/persons'
 
 const FilterForm = (props) => {
   return (
@@ -17,7 +17,16 @@ const PersonForm = (props) => {
     event.preventDefault()
 
     if (!alreadyExists()) {
-      props.setPersons(props.persons.concat([{name: props.newPerson, number: props.newNumber}]))
+      //props.setPersons(props.persons.concat([{name: props.newPerson, number: props.newNumber}]))
+      personsService
+        .create({name: props.newPerson, number: props.newNumber})
+        .then(response => {
+          props.setPersons(props.persons.concat(response))
+          props.setNewPerson('')
+          props.setNewNumber('')
+        })
+      console.log(props.newPerson, props.newNumber)
+
     } else {
       alert(`${props.newPerson} is already added to phonebook`)
     }
@@ -70,10 +79,10 @@ const App = () => {
   const [filterField, setFilter] = useState('')
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => {
-        setPersons(response.data)
+    personsService
+    .getAll()
+    .then(response => {
+      setPersons(response)
     })
   }, [])
   
@@ -100,7 +109,9 @@ const App = () => {
       <h2>add a new</h2>
         <div>
           <PersonForm persons={persons} 
-            setPersons={setPersons} 
+            setPersons={setPersons}
+            setNewPerson={setNewPerson}
+            setNewNumber={setNewNumber} 
             handleNameInput={handleNameInput}
             handleNumberInput={handleNumberInput}
             newPerson={newPerson} 
