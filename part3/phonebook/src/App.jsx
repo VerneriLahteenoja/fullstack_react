@@ -20,18 +20,26 @@ const PersonForm = (props) => {
       personsService
         .create({name: props.newPerson, number: props.newNumber})
         .then(response => {
-          props.setPersons(props.persons.concat(response))
-          props.setNewPerson('')
-          props.setNewNumber('')
+          console.log(`created id:${response.id} name:${response.name} number:${response.number}`)
         })
-      console.log(props.newPerson, props.newNumber)
 
     } else {
-      alert(`${props.newPerson} is already added to phonebook`)
+      if (window.confirm((`${props.newPerson} is already added to phonebook, replace the old number with a new one?`))) {
+        const findPerson = props.persons.find(p => p.name === props.newPerson)
+        const newData = { ...findPerson, number: props.newNumber}
+        console.log(newData)
+        personsService
+          .update(newData.id, newData)
+          .then((response) => {
+            console.log(`updated id:${response.id} name:${response.name} number:${response.number}`)
+          }).catch(() => console.log('Error with update'))
+      }
     }
+    props.setNewPerson('')
+    props.setNewNumber('')
   }
   const alreadyExists = () => {
-    return (props.persons.map((person) => person.name === props.newPerson))
+    return (props.persons.some((person) => person.name === props.newPerson))
   }
   return (
     <form onSubmit={addPerson} >
@@ -61,7 +69,7 @@ const RenderPersons = (props) => {
       personsService
         .deletePerson(id)
         .then(() => {
-          props.setPersons(props.persons.filter(person => person.id !== id))
+          console.log('Deleted successfully')
         })
         .catch(error => console.log(`Error: ${error}`))
     }
@@ -95,7 +103,7 @@ const App = () => {
     .then(response => {
       setPersons(response)
     })
-  }, [])
+  }, [persons])
   
   const handleFilterInput = (event) => {
     setFilter(event.target.value)
