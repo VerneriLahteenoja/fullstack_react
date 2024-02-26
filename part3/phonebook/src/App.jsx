@@ -21,17 +21,27 @@ const PersonForm = (props) => {
         .create({name: props.newPerson, number: props.newNumber})
         .then(response => {
           console.log(`created id:${response.id} name:${response.name} number:${response.number}`)
+          props.setSuccess(true)
+          props.setMsg('Number added successfully')
+          setTimeout(() => {
+            props.setSuccess(null)
+            props.setMsg(null)
+          }, 5000)
         })
-
     } else {
       if (window.confirm((`${props.newPerson} is already added to phonebook, replace the old number with a new one?`))) {
         const findPerson = props.persons.find(p => p.name === props.newPerson)
         const newData = { ...findPerson, number: props.newNumber}
-        console.log(newData)
         personsService
           .update(newData.id, newData)
           .then((response) => {
             console.log(`updated id:${response.id} name:${response.name} number:${response.number}`)
+            props.setSuccess(true)
+            props.setMsg('Number updated successfully')
+            setTimeout(() => {
+              props.setSuccess(null)
+              props.setMsg(null)
+            }, 5000)
           }).catch(() => console.log('Error with update'))
       }
     }
@@ -69,7 +79,12 @@ const RenderPersons = (props) => {
       personsService
         .deletePerson(id)
         .then(() => {
-          console.log('Deleted successfully')
+          props.setSuccess(true)
+          props.setMsg(`Number deleted successfully`)
+          setTimeout(() => {
+            props.setSuccess(null)
+            props.setMsg(null)
+          }, 5000)
         })
         .catch(error => console.log(`Error: ${error}`))
     }
@@ -91,11 +106,25 @@ const RenderPersons = (props) => {
   )
 }
 
+const Notification = ({ message, success }) => {
+  const isSuccessful = success ? "success" : "error"
+  if (message === null) {
+    return null
+  }
+  return (
+    <div className={isSuccessful}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newPerson, setNewPerson] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterField, setFilter] = useState('')
+  const [msg, setMsg] = useState(null)
+  const [success, setSuccess] = useState(null)
 
   useEffect(() => {
     personsService
@@ -118,6 +147,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+        <Notification message={msg} success={success}/>
         <div>
           <FilterForm 
             filterField={filterField} 
@@ -129,7 +159,9 @@ const App = () => {
           <PersonForm persons={persons} 
             setPersons={setPersons}
             setNewPerson={setNewPerson}
-            setNewNumber={setNewNumber} 
+            setNewNumber={setNewNumber}
+            setMsg={setMsg}
+            setSuccess={setSuccess}
             handleNameInput={handleNameInput}
             handleNumberInput={handleNumberInput}
             newPerson={newPerson} 
@@ -142,6 +174,8 @@ const App = () => {
             filterField={filterField} 
             persons={persons}
             setPersons={setPersons}
+            setMsg={setMsg}
+            setSuccess={setSuccess}
           />
         </div>
     </div>
