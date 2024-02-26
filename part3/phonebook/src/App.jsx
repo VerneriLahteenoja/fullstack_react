@@ -31,7 +31,7 @@ const PersonForm = (props) => {
     }
   }
   const alreadyExists = () => {
-    return (props.persons.map((person) => person.name)).includes(props.newPerson)
+    return (props.persons.map((person) => person.name === props.newPerson))
   }
   return (
     <form onSubmit={addPerson} >
