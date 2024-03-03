@@ -42,7 +42,15 @@ const PersonForm = (props) => {
               props.setSuccess(null)
               props.setMsg(null)
             }, 5000)
-          }).catch(() => console.log('Error with update'))
+          }).catch(() => {
+            console.log('Error with update')
+            props.setSuccess(false)
+            props.setMsg('Failed to update')
+            setTimeout(() => {
+              props.setSuccess(null)
+              props.setMsg(null)
+            }, 5000)
+          })
       }
     }
     props.setNewPerson('')
@@ -132,7 +140,7 @@ const App = () => {
     .then(response => {
       setPersons(response)
     })
-  }, [persons])
+  }, [success])
   
   const handleFilterInput = (event) => {
     setFilter(event.target.value)
