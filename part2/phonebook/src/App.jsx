@@ -23,10 +23,11 @@ const PersonForm = (props) => {
           console.log(`created id:${response.id} name:${response.name} number:${response.number}`)
           props.setSuccess(true)
           props.setMsg('Number added successfully')
-          setTimeout(() => {
-            props.setSuccess(null)
-            props.setMsg(null)
-          }, 5000)
+        })
+        .catch(error => {
+          console.log(error.response.data.error)
+          props.setSuccess(false)
+          props.setMsg(error.response.data.error)
         })
     } else {
       if (window.confirm((`${props.newPerson} is already added to phonebook, replace the old number with a new one?`))) {
@@ -38,23 +39,19 @@ const PersonForm = (props) => {
             console.log(`updated id:${response.id} name:${response.name} number:${response.number}`)
             props.setSuccess(true)
             props.setMsg('Number updated successfully')
-            setTimeout(() => {
-              props.setSuccess(null)
-              props.setMsg(null)
-            }, 5000)
           }).catch(() => {
             console.log('Error with update')
             props.setSuccess(false)
             props.setMsg('Failed to update')
-            setTimeout(() => {
-              props.setSuccess(null)
-              props.setMsg(null)
-            }, 5000)
           })
       }
     }
     props.setNewPerson('')
     props.setNewNumber('')
+    setTimeout(() => {
+      props.setSuccess(null)
+      props.setMsg(null)
+    }, 5000)
   }
   const alreadyExists = () => {
     return (props.persons.some((person) => person.name === props.newPerson))
